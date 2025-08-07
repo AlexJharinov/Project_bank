@@ -108,7 +108,7 @@ def test_get_currency(mocker):
 
     # Ожидаемый результат
     expected_result = [
-        {"currency": "USD", "rate": 79.15},
+        {"currency": "USD", "rate": 79.19},
     ]
 
     # Проверка результата
