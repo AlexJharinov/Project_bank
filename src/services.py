@@ -1,10 +1,7 @@
 import json
 import logging
 from typing import Any
-
 import pandas as pd
-
-
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -22,7 +19,9 @@ def analyze_cashback(file_path: str, year: int, month: int) -> dict[Any, Any] | 
     Анализирует выгодность категорий повышенного кешбэка.
 
     """
-    services_loger.info(f"Запуск функции analyze_cashback с файлом: {file_path}, годом: {year}, месяцем: {month}")
+    services_loger.info(
+        f"Запуск функции analyze_cashback с файлом: {file_path}, годом: {year}, месяцем: {month}"
+    )
     try:
         df = pd.read_excel(file_path)
     except Exception as e:
@@ -30,10 +29,14 @@ def analyze_cashback(file_path: str, year: int, month: int) -> dict[Any, Any] | 
         return {}
 
         # Преобразование даты в формат datetime
-    df["Дата операции"] = pd.to_datetime(df["Дата операции"], format="%d.%m.%Y %H:%M:%S")
+    df["Дата операции"] = pd.to_datetime(
+        df["Дата операции"], format="%d.%m.%Y %H:%M:%S"
+    )
     services_loger.info("Преобразование даты в формат datetime")
     # Фильтрация данных по году и месяцу
-    filtered_data = df[(df["Дата операции"].dt.year == year) & (df["Дата операции"].dt.month == month)]
+    filtered_data = df[
+        (df["Дата операции"].dt.year == year) & (df["Дата операции"].dt.month == month)
+    ]
     services_loger.info("Фильтрация данных по году и месяцу")
     # Если filtered_data не содержит строк
     if filtered_data.empty:
@@ -57,5 +60,5 @@ def analyze_cashback(file_path: str, year: int, month: int) -> dict[Any, Any] | 
 
 
 if __name__ == "__main__":
-    result = analyze_cashback("../data/operations.xlsx" , 2020, 12)
+    result = analyze_cashback("../data/operations.xlsx", 2020, 12)
     print(result)

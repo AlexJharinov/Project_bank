@@ -7,17 +7,29 @@ import pytest
 import requests
 
 from src import utils
-from src.utils import get_date, get_period, get_card_with_spend, get_top, get_currency, get_stock
+from src.utils import (
+    get_date,
+    get_period,
+    get_card_with_spend,
+    get_top,
+    get_currency,
+    get_stock,
+)
 
 
-@pytest.mark.parametrize("fake_hour, expected", [
-    (6, "Доброе утро"),
-    (13, "Добрый день"),
-    (19, "Добрый вечер"),
-    (3, "Доброй ночи"),
-])
+@pytest.mark.parametrize(
+    "fake_hour, expected",
+    [
+        (6, "Доброе утро"),
+        (13, "Добрый день"),
+        (19, "Добрый вечер"),
+        (3, "Доброй ночи"),
+    ],
+)
 @patch("src.utils.datetime")
-def test_get_time_for_greeting_all_periods(mock_datetime, fake_hour, expected):  # тест на функцию приветствие
+def test_get_time_for_greeting_all_periods(
+    mock_datetime, fake_hour, expected
+):  # тест на функцию приветствие
     mock_datetime.now.return_value = datetime(2023, 10, 15, fake_hour, 0, 0)
     mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
 
@@ -25,18 +37,18 @@ def test_get_time_for_greeting_all_periods(mock_datetime, fake_hour, expected): 
     assert result == expected
 
 
-
 def test_get_date_standard_format():
     """
-        Тест на функцию get_date
+    Тест на функцию get_date
     """
     input_str = "2025-08-05 10:15:30"
     result = get_date(input_str)
     assert result == ["01.08.2025 10:15:30", "05.08.2025 10:15:30"]
 
+
 def test_get_date_invalid_format():
     """
-        Тест на функцию get_date с неправильным форматом
+    Тест на функцию get_date с неправильным форматом
     """
     input_str = "08/05/2025 10:15:30"
     with pytest.raises(ValueError):
@@ -45,7 +57,7 @@ def test_get_date_invalid_format():
 
 def test_get_period_filters_correctly(sample_excel_file):
     """
-        Тест на функцию get_period
+    Тест на функцию get_period
     """
     period = ["02.08.2025 00:00:00", "15.08.2025 23:59:59"]
 
@@ -66,13 +78,11 @@ def test_get_card_with_spent_correct_data(df_data):
     result = get_card_with_spend(df_data)
 
     # Ожидаемый результат
-    expected_result = [
-
-        {"last_digits": "7197", "total_spent": 296.8, "cashback": 2.0}
-    ]
+    expected_result = [{"last_digits": "7197", "total_spent": 296.8, "cashback": 2.0}]
 
     # Проверка результата
     assert result == expected_result
+
 
 def test_get_top_transactions_correct_data(df_data):
 
@@ -80,11 +90,36 @@ def test_get_top_transactions_correct_data(df_data):
 
     # Ожидаемый результат
     expected_result = [
-        {"date": "04.05.2018", "amount": -58.0, "category": "Фастфуд", "description": "McDonald's"},
-        {"date": "03.05.2018", "amount": -69.9, "category": "Фастфуд", "description": "Бургер Кинг"},
-        {"date": "02.05.2018", "amount": -208.0, "category": "Ж/д билеты", "description": "Московский метрополитен"},
-        {"date": "04.05.2018", "amount": -221.27, "category": "Супермаркеты", "description": "Пятёрочка"},
-        {"date": "05.05.2018", "amount": -250.0, "category": "Связь", "description": "МТС"},
+        {
+            "date": "04.05.2018",
+            "amount": -58.0,
+            "category": "Фастфуд",
+            "description": "McDonald's",
+        },
+        {
+            "date": "03.05.2018",
+            "amount": -69.9,
+            "category": "Фастфуд",
+            "description": "Бургер Кинг",
+        },
+        {
+            "date": "02.05.2018",
+            "amount": -208.0,
+            "category": "Ж/д билеты",
+            "description": "Московский метрополитен",
+        },
+        {
+            "date": "04.05.2018",
+            "amount": -221.27,
+            "category": "Супермаркеты",
+            "description": "Пятёрочка",
+        },
+        {
+            "date": "05.05.2018",
+            "amount": -250.0,
+            "category": "Связь",
+            "description": "МТС",
+        },
     ]
 
     # Проверка результата
@@ -113,6 +148,7 @@ def test_get_currency(mocker):
 
     # Проверка результата
     assert result == expected_result
+
 
 def test_get_stock_correct_data(mocker):
     # Мокируем открытие файла и чтение JSON
@@ -158,6 +194,7 @@ def test_get_stock_correct_data(mocker):
     # Проверка результата
     assert result == expected_result
 
+
 def test_get_stock_http_error(mocker):
     # Мокаем файл с данными
     mock_json_data = {"user_stocks": ["AAPL", "GOOGL"]}
@@ -165,15 +202,10 @@ def test_get_stock_http_error(mocker):
     mocker.patch("builtins.open", mock_file)
 
     # Мокаем ошибку сети
-    mocker.patch("requests.get", side_effect=requests.exceptions.RequestException("Ошибка сети"))
+    mocker.patch(
+        "requests.get", side_effect=requests.exceptions.RequestException("Ошибка сети")
+    )
 
     # Ожидаем, что функция выбросит исключение
     with pytest.raises(requests.exceptions.RequestException):
         get_stock("fake_path.json")
-
-
-
-
-
-
-

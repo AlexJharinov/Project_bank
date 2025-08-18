@@ -11,7 +11,9 @@ from src.reports import report_decorator, spending_by_category
 def setup_logging():
     log_stream = StringIO()
     handler = logging.StreamHandler(log_stream)
-    handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+    handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    )
 
     # Настраиваем логгер reports_loger
     reports_loger = logging.getLogger("reports")

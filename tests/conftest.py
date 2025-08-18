@@ -9,15 +9,21 @@ def sample_excel_file(tmp_path):
     # Подготовим данные
     data = {
         "Дата операции": [
-            "01.08.2025", "03.08.2025", "10.08.2025", "15.08.2025", "20.08.2025"
+            "01.08.2025",
+            "03.08.2025",
+            "10.08.2025",
+            "15.08.2025",
+            "20.08.2025",
         ],
-        "Сумма": [100, 200, 300, 400, 500]
+        "Сумма": [100, 200, 300, 400, 500],
     }
     df = pd.DataFrame(data)
 
-    file_path = tmp_path  / "test.xlsx"
+    file_path = tmp_path / "test.xlsx"
     df.to_excel(file_path, index=False)
     return file_path
+
+
 @pytest.fixture
 def test_dataframe():
     # Создаем тестовый DataFrame

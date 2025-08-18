@@ -8,7 +8,6 @@ import pandas as pd
 from pandas import DataFrame
 
 
-
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -40,7 +39,9 @@ def report_decorator(filename=None):
             # Записываем результат в файл
             with open(report_filename, "w", encoding="utf-8") as file:
                 if isinstance(result, pd.DataFrame):
-                    result.to_json(file, orient="records", lines=True, force_ascii=False)
+                    result.to_json(
+                        file, orient="records", lines=True, force_ascii=False
+                    )
                 else:
                     json.dump(result, file, indent=4, ensure_ascii=False)
 
@@ -53,13 +54,17 @@ def report_decorator(filename=None):
 
 
 @report_decorator("report_spending_by_category.json")
-def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str]) -> dict | None:
+def spending_by_category(
+    transactions: pd.DataFrame, category: str, date: Optional[str]
+) -> dict | None:
     """
-        Функция возвращает траты по заданной категории за последние три месяца.
+    Функция возвращает траты по заданной категории за последние три месяца.
 
     """
     try:
-        reports_loger.info(f"Запуск функции spending_by_category с категорией: {category} и датой: {date}")
+        reports_loger.info(
+            f"Запуск функции spending_by_category с категорией: {category} и датой: {date}"
+        )
         if date is None:
             date = datetime.now().strftime("%Y-%m-%d")
             reports_loger.info(f"Дата не передана, используется текущая дата: {date}")
@@ -69,7 +74,9 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         reports_loger.info("Преобразуем дату в формат datetime")
         start_date = end_date - timedelta(days=90)
         if not pd.api.types.is_datetime64_any_dtype(transactions["Дата платежа"]):
-            transactions["Дата платежа"] = pd.to_datetime(transactions["Дата платежа"], dayfirst=True)
+            transactions["Дата платежа"] = pd.to_datetime(
+                transactions["Дата платежа"], dayfirst=True
+            )
             reports_loger.info("Столбец 'Дата платежа' преобразован в формат datetime")
         # Фильтруем транзакции по категории и дате
         filtered_transactions = transactions[
@@ -77,7 +84,9 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             & (transactions["Дата платежа"] >= start_date.strftime("%Y-%m-%d"))
             & (transactions["Дата платежа"] <= end_date.strftime("%Y-%m-%d"))
         ]
-        expenses_by_category = filtered_transactions.groupby("Категория")["Сумма операции с округлением"].sum()
+        expenses_by_category = filtered_transactions.groupby("Категория")[
+            "Сумма операции с округлением"
+        ].sum()
         reports_loger.info("Группируем данные по категории и сумме платежа")
         result = expenses_by_category.to_dict()
         return result
